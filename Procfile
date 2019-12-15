@@ -1,0 +1,1 @@
+bot-support-tg: python3 bot.py
