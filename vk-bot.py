@@ -1,0 +1,53 @@
+import json
+from random import randint
+
+import vk_api
+from vk_api.longpoll import VkLongPoll, VkEventType
+
+import dialogflow_v2 as dialogflow
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+TOKEN_VK = os.environ.get('TOKEN_VK')
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+
+
+def get_file(filename: str):
+    with open(filename, 'r') as file:
+        return json.load(file)
+
+
+def dialog(event, vk_api):
+    client = dialogflow.SessionsClient()
+    config = get_file(GOOGLE_APPLICATION_CREDENTIALS)
+
+    session = client.session_path(config['project_id'], event.user_id)
+
+    text_input = dialogflow.types.TextInput(
+        text=event.text,
+        language_code='ru'
+    )
+    query_input = dialogflow.types.QueryInput(text=text_input)
+
+    response = client.detect_intent(
+        session=session,
+        query_input=query_input
+    )
+
+    vk_api.messages.send(
+        user_id=event.user_id,
+        message=response.query_result.fulfillment_text,
+        random_id=randint(1, 1000)
+    )
+
+
+if __name__ == "__main__":
+    vk_session = vk_api.VkApi(token=TOKEN_VK)
+    vk_api = vk_session.get_api()
+    longpoll = VkLongPoll(vk_session)
+    for event in longpoll.listen():
+        if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+            dialog(event, vk_api)

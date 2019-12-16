@@ -1,4 +1,4 @@
-#  Telegram Бот помощник
+# Бот помощник Telegram и VK
 создан для закрытия типичных вопросов службы поддержки.
 
 ## для запуска требуется
@@ -7,11 +7,13 @@
 - создать файл .env в корне проекта с переменными: 
     - TOKEN_BOT,
     - GOOGLE_APPLICATION_CREDENTIALS
+    - TOKEN_VK
     
 пример:
 
     TOKEN_BOT=1233435
     GOOGLE_APPLICATION_CREDENTIALS=path/to/file.json
+    TOKEN_VK=111222333
 
 - запустить командой `python bot.py`
 
@@ -31,4 +33,8 @@
 > чтобы создать JSON-ключ идем сюда https://cloud.google.com/docs/authentication/getting-started
 
 ### Результат:
+Telegram
 ![Alt Text](https://dvmn.org/filer/canonical/1569214094/323/)
+
+Vk
+![Alt Text](https://dvmn.org/filer/canonical/1569214089/322/)
