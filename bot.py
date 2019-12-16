@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TOKEN_BOT = os.getenv('TOKEN_BOT')
-GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+TOKEN_BOT = os.environ.get('TOKEN_BOT')
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 
 
 def start(bot, update):
