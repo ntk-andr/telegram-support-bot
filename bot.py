@@ -18,10 +18,6 @@ def start(bot, update):
     update.message.reply_text('Здравствуйте! Чем можем помочь?')
 
 
-def echo(bot, update):
-    update.message.reply_text(update.message.text)
-
-
 def dialog(bot, update):
     client = dialogflow.SessionsClient()
     config = get_file(GOOGLE_APPLICATION_CREDENTIALS)
