@@ -10,16 +10,16 @@ load_dotenv()
 GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
 
-def get_file(filename: str):
-    with open(filename, 'r') as file:
-        return json.load(file)
-
-
 def create_intents():
     client = dialogflow.IntentsClient()
-    config = get_file(GOOGLE_APPLICATION_CREDENTIALS)
+    with open(GOOGLE_APPLICATION_CREDENTIALS, 'r') as configfile:
+        config = json.load(configfile)
+
     parent = client.project_agent_path(config['project_id'])
-    intents = get_file('intents.json')
+
+    with open('intents.json', 'r') as intentsfile:
+        intents = json.load(intentsfile)
+
     for intent in intents:
         try:
             client.create_intent(parent, intent)

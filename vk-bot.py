@@ -15,17 +15,13 @@ TOKEN_VK = os.environ.get('TOKEN_VK')
 GOOGLE_APPLICATION_CREDENTIALS = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 
 
-def get_file(filename: str):
-    with open(filename, 'r') as file:
-        return json.load(file)
-
-
-def dialog(event, vk_api):
+def handle_message(event, vk_api):
     client = dialogflow.SessionsClient()
-    config = get_file(GOOGLE_APPLICATION_CREDENTIALS)
+
+    with open(GOOGLE_APPLICATION_CREDENTIALS, 'r') as file:
+        config = json.load(file)
 
     session = client.session_path(config['project_id'], event.user_id)
-
     text_input = dialogflow.types.TextInput(
         text=event.text,
         language_code='ru'
@@ -37,11 +33,12 @@ def dialog(event, vk_api):
         query_input=query_input
     )
 
-    vk_api.messages.send(
-        user_id=event.user_id,
-        message=response.query_result.fulfillment_text,
-        random_id=randint(1, 1000)
-    )
+    if response.query_result.intent.display_name:
+        vk_api.messages.send(
+            user_id=event.user_id,
+            message=response.query_result.fulfillment_text,
+            random_id=randint(1, 1000)
+        )
 
 
 if __name__ == "__main__":
@@ -50,4 +47,4 @@ if __name__ == "__main__":
     longpoll = VkLongPoll(vk_session)
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            dialog(event, vk_api)
+            handle_message(event, vk_api)

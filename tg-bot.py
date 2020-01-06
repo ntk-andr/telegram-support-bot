@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import logging
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
@@ -18,9 +19,10 @@ def start(bot, update):
     update.message.reply_text('Здравствуйте! Чем можем помочь?')
 
 
-def dialog(bot, update):
+def handle_message(bot, update):
     client = dialogflow.SessionsClient()
-    config = get_file(GOOGLE_APPLICATION_CREDENTIALS)
+    with open(GOOGLE_APPLICATION_CREDENTIALS, 'r') as file:
+        config = json.load(file)
     session_id = update.message.chat.id
 
     session = client.session_path(config['project_id'], session_id)
@@ -40,11 +42,6 @@ def dialog(bot, update):
     update.message.reply_text(response.query_result.fulfillment_text)
 
 
-def get_file(filename: str):
-    with open(filename, 'r') as file:
-        return json.load(file)
-
-
 def main():
     updater = Updater(TOKEN_BOT)
 
@@ -52,7 +49,7 @@ def main():
 
     dp.add_handler(CommandHandler("start", start))
 
-    dp.add_handler(MessageHandler(Filters.text, dialog))
+    dp.add_handler(MessageHandler(Filters.text, handle_message))
 
     updater.start_polling()
 
