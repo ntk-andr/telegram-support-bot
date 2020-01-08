@@ -33,7 +33,7 @@ def handle_message(event, vk_api):
         query_input=query_input
     )
 
-    if response.query_result.intent.display_name:
+    if not response.query_result.intent.is_fallback:
         vk_api.messages.send(
             user_id=event.user_id,
             message=response.query_result.fulfillment_text,
